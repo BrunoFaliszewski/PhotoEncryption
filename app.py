@@ -7,7 +7,7 @@ import numpy as np
 class App(Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
-        self.title('Szyfrowanie')
+        self.title('Photo Encryption')
         self.geometry('500x500')
 
         self.selectIMGButton = Button(self, text="Select Image")
@@ -30,16 +30,18 @@ class App(Tk):
     def encrypt(self):
         self.byte_array = np.asarray(self.image)
         self.byte_array = self.byte_array.flatten()
+        print(self.byte_array[0:10])
         self.messageString = self.message.get()
-        self.lengthOfMessage = list(bin(len(self.messageString))[2::])
+        self.lengthOfMessage = list(map(int, list(bin(len(self.messageString))[2::])))
         for i in range(10-len(self.lengthOfMessage)):
-            self.lengthOfMessage.insert(0, '0')
+            self.lengthOfMessage.insert(0, 0)
         print(self.lengthOfMessage)
         for i in range(10):
             if self.byte_array[i]%2 == 0:
-                self.byte_array[i] += int(self.lengthOfMessage)
+                self.byte_array[i] += self.lengthOfMessage[i]
             else:
-                self.byte_array[i] += int(self.lengthOfMessage) - 1
+                self.byte_array[i] += self.lengthOfMessage[i] - 1
+        print(self.byte_array[0:10])
 
     def selectIMG(self):
         self.path = filedialog.askopenfilename(filetypes=[("Image File",'.jpg')])
