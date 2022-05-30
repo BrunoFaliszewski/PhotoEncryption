@@ -12,7 +12,7 @@ def pad(plainText):
         return paddedPlainText
 
 def unpad(plainText):
-        lastCharacter = plainText[-1:]
+        lastCharacter = plainText[len(plainText) -1:]
         bytesToRemove = ord(lastCharacter)
         return plainText[:-bytesToRemove]
 

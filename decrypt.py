@@ -17,8 +17,7 @@ class App(Tk):
         self.passwordLabel = Label(self, text="Password")
         self.passwordLabel.pack()
 
-        self.password = StringVar()
-        self.passwordInput = Entry(self, textvariable=self.password)
+        self.passwordInput = Text(self, width=30, height=1)
         self.passwordInput['state'] = 'disable'
         self.passwordInput.pack() 
 
@@ -27,8 +26,8 @@ class App(Tk):
         self.decryptButton['state'] = 'disable'
         self.decryptButton.pack()
 
-        self.decryptedString = StringVar()
-        self.decryptedText = Label(self, textvariable=self.decryptedString)
+        self.decryptedText = Text(self, width=60, height=3)
+        self.decryptedText['state'] = 'disable'
         self.decryptedText.pack()
 
     def decrypt(self):
@@ -36,7 +35,8 @@ class App(Tk):
         self.photoShape = self.byte_array.shape
         self.byte_array = self.byte_array.flatten()
 
-        self.passwordString = self.password.get()
+        self.passwordString = self.passwordInput.get('1.0', 'end')
+        self.decryptedText['state'] = 'normal'
 
         self.lengthOfMessage = []
         for i in range(10):
@@ -58,7 +58,7 @@ class App(Tk):
         self.message = "".join(self.message)
         self.message = AES.decrypt(self.message.encode(), self.passwordString)
 
-        self.decryptedString.set(self.message)
+        self.decryptedText.insert('1.0', self.message)
 
     def selectIMG(self):
         self.path = filedialog.askopenfilename(filetypes=[("Image File", '.bmp')])

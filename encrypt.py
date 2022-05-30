@@ -20,16 +20,14 @@ class App(Tk):
         self.inputLabel = Label(self.menu, text="Write message")
         self.inputLabel.grid(row=2, column=1)
 
-        self.message = StringVar()
-        self.input = Entry(self.menu, textvariable=self.message)
+        self.input = Text(self.menu, width=30, height=3)
         self.input['state'] = 'disable'
         self.input.grid(row=3, column=1)
 
         self.passwordLabel = Label(self.menu, text="Password")
         self.passwordLabel.grid(row=2, column=2)
 
-        self.password = StringVar()
-        self.passwordInput = Entry(self.menu, textvariable=self.password)
+        self.passwordInput = Text(self.menu, width=30, height=3)
         self.passwordInput['state'] = 'disable'
         self.passwordInput.grid(row=3, column=2)
 
@@ -43,8 +41,8 @@ class App(Tk):
         self.photoShape = self.byte_array.shape
         self.byte_array = self.byte_array.flatten()
 
-        self.messageString = self.message.get()
-        self.passwordString = self.password.get()
+        self.messageString = self.input.get('1.0', 'end')
+        self.passwordString = self.passwordInput.get('1.0', 'end')
 
         self.messageString = AES.encrypt(self.messageString.encode(), self.passwordString).decode()
         self.binaryMessage = list(map(bin, bytearray(self.messageString, 'utf-8')))
