@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
 import numpy as np
+import AES
 
 class App(Tk):
     def __init__(self, *args, **kwargs):
@@ -13,6 +14,14 @@ class App(Tk):
         self.selectIMGButton['command'] = self.selectIMG
         self.selectIMGButton.pack()
 
+        self.passwordLabel = Label(self, text="Password")
+        self.passwordLabel.pack()
+
+        self.password = StringVar()
+        self.passwordInput = Entry(self, textvariable=self.password)
+        self.passwordInput['state'] = 'disable'
+        self.passwordInput.pack() 
+
         self.decryptButton = Button(self, text="Decrypt")
         self.decryptButton['command'] = self.decrypt
         self.decryptButton['state'] = 'disable'
@@ -23,6 +32,7 @@ class App(Tk):
         self.decryptedText.pack()
 
     def decrypt(self):
+        self.passwordString = self.password.get()
         self.byte_array = np.asarray(self.image)
         self.photoShape = self.byte_array.shape
         self.byte_array = self.byte_array.flatten()
@@ -43,6 +53,7 @@ class App(Tk):
         for i in range(len(self.message)):
             self.message[i] = chr(int("".join(str(x) for x in self.message[i]), 2))
         self.message = "".join(self.message)
+        self.message = AES.decrypt(self.message.encode(), self.passwordString)
         self.decryptedString.set(self.message)
 
     def selectIMG(self):
@@ -54,8 +65,8 @@ class App(Tk):
         self.canvas.pack()
 
         self.decryptButton['state'] = 'normal'
+        self.passwordInput['state'] = 'normal'
 
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-
