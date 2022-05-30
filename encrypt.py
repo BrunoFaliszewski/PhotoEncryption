@@ -54,9 +54,7 @@ class App(Tk):
         self.byte_array = self.byte_array.reshape(self.photoShape)
         self.byte_array = np.ascontiguousarray(self.byte_array)
         self.encryptedImage = Image.fromarray(self.byte_array)
-        self.encryptedArray = np.asarray(self.encryptedImage)
-        print(self.encryptedArray.flatten())
-        self.savePath = filedialog.asksaveasfile(defaultextension='.jpg')
+        self.savePath = filedialog.asksaveasfile(mode='wb' ,filetypes=[("Bitmap", '*.bmp')], defaultextension=[("Bitmap", '*.bmp')])
         if not self.savePath:
             return
         self.encryptedImage.save(self.savePath)
