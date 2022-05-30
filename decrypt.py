@@ -8,7 +8,7 @@ class App(Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
         self.title('Photo Encryption')
-        self.geometry('500x500')
+        self.state('zoomed')
 
         self.selectIMGButton = Button(self, text="Select Image")
         self.selectIMGButton['command'] = self.selectIMG
@@ -32,10 +32,12 @@ class App(Tk):
         self.decryptedText.pack()
 
     def decrypt(self):
-        self.passwordString = self.password.get()
         self.byte_array = np.asarray(self.image)
         self.photoShape = self.byte_array.shape
         self.byte_array = self.byte_array.flatten()
+
+        self.passwordString = self.password.get()
+
         self.lengthOfMessage = []
         for i in range(10):
             if self.byte_array[i]%2 == 0:
@@ -43,6 +45,7 @@ class App(Tk):
             else:
                 self.lengthOfMessage.append(1)
         self.lengthOfMessage = int("".join(str(x) for x in self.lengthOfMessage), 2)
+
         self.message = []
         for i in range(self.lengthOfMessage*8):
             if self.byte_array[i+10]%2 == 0:
@@ -54,14 +57,16 @@ class App(Tk):
             self.message[i] = chr(int("".join(str(x) for x in self.message[i]), 2))
         self.message = "".join(self.message)
         self.message = AES.decrypt(self.message.encode(), self.passwordString)
+
         self.decryptedString.set(self.message)
 
     def selectIMG(self):
         self.path = filedialog.askopenfilename(filetypes=[("Image File", '.bmp')])
         self.image = Image.open(self.path)
         self.tkimage = ImageTk.PhotoImage(self.image)
+
         self.canvas = Canvas(self, width=1000, height=1000-self.selectIMGButton.winfo_height())
-        self.imgContainer = self.canvas.create_image(0, 0, image=self.tkimage, anchor='nw')
+        self.canvas.create_image(0, 0, image=self.tkimage, anchor='nw')
         self.canvas.pack()
 
         self.decryptButton['state'] = 'normal'
