@@ -65,7 +65,7 @@ class App(Tk):
         self.image = Image.open(self.path)
         self.tkimage = ImageTk.PhotoImage(self.image)
 
-        self.canvas = Canvas(self, width=1000, height=1000-self.selectIMGButton.winfo_height())
+        self.canvas = Canvas(self, width=self.winfo_screenwidth(), height=self.winfo_screenheight()-self.selectIMGButton.winfo_height())
         self.canvas.create_image(0, 0, image=self.tkimage, anchor='nw')
         self.canvas.pack()
 
