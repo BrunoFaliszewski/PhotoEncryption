@@ -1,1 +1,5 @@
-*.txt
+__pycache__
+Pipfile
+Pipfile.lock
+dist
+photoencryption.egg-info

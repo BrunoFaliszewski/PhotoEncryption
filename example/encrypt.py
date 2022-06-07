@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import filedialog
+from photoEncryption.encrypt import *
 from PIL import Image, ImageTk
 import numpy as np
 import AES
@@ -37,55 +38,12 @@ class App(Tk):
         self.encryptButton.grid(row=4, column=1, columnspan=2)
 
     def encrypt(self):
-        self.byte_array = np.asarray(self.image)
-        self.photoShape = self.byte_array.shape
-        print(self.photoShape)
-
-        with open('before.txt', 'w') as file:
-            text = ''
-            for i in self.byte_array:
-                text += f'{i}\n'
-            file.write(text)
-
-        self.byte_array = self.byte_array.flatten()
-
         self.messageString = self.input.get('1.0', 'end')
         self.passwordString = self.passwordInput.get('1.0', 'end')
-
         self.messageString = AES.encrypt(self.messageString.encode(), self.passwordString).decode()
-        self.binaryMessage = list(map(bin, bytearray(self.messageString, 'utf-8')))
-        for i in range(len(self.binaryMessage)):
-            self.binaryMessage[i] = self.binaryMessage[i][2::]
-            self.binaryMessage[i] = [int(char) for char in self.binaryMessage[i]]
-            for j in range(8-len(self.binaryMessage[i])):
-                self.binaryMessage[i].insert(0, 0)
+        
+        self.encryptedImage = encrypt(self.image, self.messageString)
 
-        self.binaryMessage = np.asarray(self.binaryMessage).flatten()
-
-        self.lengthOfMessage = list(map(int, list(bin(len(self.messageString))[2::])))
-        for i in range(10-len(self.lengthOfMessage)):
-            self.lengthOfMessage.insert(0, 0)
-        for i in range(10):
-            if self.byte_array[i]%2 == 0:
-                self.byte_array[i] += self.lengthOfMessage[i]
-            else:
-                self.byte_array[i] += self.lengthOfMessage[i] - 1
-
-        for i in range(len(self.messageString)*8):
-            if self.byte_array[i+10]%2 == 0:
-                self.byte_array[i+10] += self.binaryMessage[i]
-            else:
-                self.byte_array[i+10] += self.binaryMessage[i] - 1
-        self.byte_array = self.byte_array.reshape(self.photoShape)
-        self.byte_array = np.ascontiguousarray(self.byte_array)
-
-        with open('after.txt', 'w') as file:
-            text = ''
-            for i in self.byte_array:
-                text += f'{i}\n'
-            file.write(text)
-
-        self.encryptedImage = Image.fromarray(self.byte_array)
         self.savePath = filedialog.asksaveasfile(mode='wb' ,filetypes=[("Bitmap", '*.bmp')], defaultextension=[("Bitmap", '*.bmp')])
         if not self.savePath:
             return
@@ -97,7 +55,7 @@ class App(Tk):
         self.tkimage = ImageTk.PhotoImage(self.image)
         self.image = self.image.convert("RGB")
         
-        self.canvas = Canvas(self, width=self.winfo_screenwidth(), height=self.winfo_screenheight()-self.selectIMGButton.winfo_height()-self.inputLabel.winfo_height()-self.input.winfo_height()-self.passwordInput.winfo_height())
+        self.canvas = Canvas(self, width=self.winfo_screenwidth(), height=self.winfo_screenheight()-self.selectIMGButton.winfo_height()-self.inputLabel.winfo_height()-self.input.winfo_height())
         self.canvas.create_image(0, 0, image=self.tkimage, anchor='nw')
         self.canvas.place(y=self.selectIMGButton.winfo_height()+self.inputLabel.winfo_height()+self.input.winfo_height()+self.encryptButton.winfo_height())
 
